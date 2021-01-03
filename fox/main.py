@@ -1,6 +1,6 @@
-from CrawlSchool.objects import Term
-from CrawlSchool.crawler import Crawler
-from CrawlSchool.objects import Semester
+from crawler.objects import Term
+from crawler.crawler import Crawler
+from crawler.objects import Semester
 
 
 def main():
