@@ -32,7 +32,7 @@ def test_parse_degree_type():
             en_name="Graduate courses",
         ),
     ]
-    degree_types = TypeParser.parse_degree_type(json_data)
+    degree_types = TypeParser.parse(json_data, DegreeType)
     assert degree_types == expect_data
 
 
@@ -47,7 +47,7 @@ def test_parse_course_category():
         CourseCategory(code="60A7936E-B0C0-4C0F-9DE7-33D16A367F20", name="台中一中科學班"),
         CourseCategory(code="*", name="not avaiable"),
     ]
-    course_categorys = TypeParser.parse_course_category(json_data)
+    course_categorys = TypeParser.parse(json_data, CourseCategory)
     assert course_categorys == expect_data
 
 
@@ -60,7 +60,7 @@ def test_parse_college():
         College(code="A", name="人文社會學院"),
         College(code="B", name="生物科技學院"),
     ]
-    colleges = TypeParser.parse_college(json_data)
+    colleges = TypeParser.parse(json_data, College)
     assert colleges == expect_data
 
 
