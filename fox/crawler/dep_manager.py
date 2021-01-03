@@ -69,8 +69,9 @@ class DepManager:
             self.crawl(step + 1, cat=cat, **kwargs)
 
     def crawl_college(self, step: int, deg: DegreeType, **kwargs):
+        kwargs["deg"] = deg
         if deg.zh_name in ["研究所課程", "學士班課程"]:
-            cols = self.nctu.fetch_colleges(self.sem, deg=deg, **kwargs)
+            cols = self.nctu.fetch_colleges(self.sem, **kwargs)
             cols = TypeParser.parse(cols, College)
             for col in self.prog.track(cols, description="[cyan]Crawl College..."):
                 assert type(col) is College
