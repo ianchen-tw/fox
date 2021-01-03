@@ -2,8 +2,10 @@ from typing import Any, Union, List, Type, Dict
 from .objects import Term, Semester, DegreeType, CourseCategory, College, Department
 import pprint
 
-ParseType = Union[DegreeType, CourseCategory, College]
-ReturnParseType = Union[List[DegreeType], List[CourseCategory], List[College]]
+ParseType = Union[DegreeType, CourseCategory, College, Department]
+ReturnParseType = Union[
+    List[DegreeType], List[CourseCategory], List[College], List[Department]
+]
 
 
 class ParseException(Exception):
@@ -16,13 +18,13 @@ class ParseException(Exception):
 class TypeParser:
     @staticmethod
     def parse(json_data: Any, parse_type: Type[ParseType]) -> ReturnParseType:
-        if parse_type is DegreeType:
-            return TypeParser.parse_degree_type(json_data)
-        elif parse_type is CourseCategory:
-            return TypeParser.parse_course_category(json_data)
-        elif parse_type is College:
-            return TypeParser.parse_college(json_data)
-        return []
+        func = {
+            DegreeType: TypeParser.parse_degree_type,
+            CourseCategory: TypeParser.parse_course_category,
+            College: TypeParser.parse_college,
+            Department: TypeParser.parse_department,
+        }.get(parse_type, lambda x: [])
+        return func(json_data)
 
     @staticmethod
     def parse_degree_type(json_data: Any) -> List[DegreeType]:
@@ -72,4 +74,15 @@ class TypeParser:
             else:
                 dic = {"code": "*", "name": "not avaiable"}
             result.append(College(**dic))
+        return result
+
+    @staticmethod
+    def parse_department(json_data: Any) -> List[Department]:
+        if type(json_data) != dict or not json_data:
+            return []
+        result = []
+        for key, value in json_data.items():
+            if value:
+                dic = {"uuid": key.strip(), "name": value.strip()}
+                result.append(Department(**dic))
         return result
