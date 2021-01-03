@@ -66,5 +66,5 @@ class College:
         name:'*'
     """
 
-    code: str
-    name: str
+    code: str = "*"
+    name: str = "not available"
