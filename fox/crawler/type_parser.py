@@ -1,6 +1,7 @@
-from typing import Any, Union, List, Type, Dict
-from .objects import Term, Semester, DegreeType, CourseCategory, College, Department
 import pprint
+from typing import Any, List, Type, Union
+
+from .objects import College, CourseCategory, DegreeType, Department
 
 ParseType = Union[DegreeType, CourseCategory, College, Department]
 ReturnParseType = Union[

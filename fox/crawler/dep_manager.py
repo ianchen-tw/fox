@@ -1,23 +1,11 @@
-from dataclasses import dataclass
-
-from .type_parser import TypeParser, ParseType
-from .objects import (
-    DegreeType,
-    Term,
-    Semester,
-    Department,
-    Course,
-    CourseCategory,
-    College,
-)
-from typing import List, Dict, Optional, Union
-from .nctu_api_nteractor import NCTUAPI_Interactor
-from rich import print
-from dataclasses import dataclass
-import pprint
-import time
 import json
+import time
+from typing import Dict, List, Optional
+
+from .nctu_api_nteractor import NCTUAPI_Interactor
+from .objects import College, CourseCategory, DegreeType, Department, Semester
 from .Tool.progress import MyProgress as Progress
+from .type_parser import TypeParser
 
 
 class DepManager:

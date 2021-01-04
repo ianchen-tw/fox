@@ -1,12 +1,12 @@
 from typing import Iterable, Optional, Sequence, Sized, Union
+
 from rich.console import Console
 from rich.progress import (
     GetTimeCallable,
+    Progress,
     ProgressColumn,
     ProgressType,
     TaskID,
-    track,
-    Progress,
     _TrackThread,
 )
 

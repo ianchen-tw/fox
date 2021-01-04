@@ -1,8 +1,8 @@
-from dataclasses import dataclass
-from .objects import Term, Semester, DegreeType, CourseCategory, College
-from typing import Any, List, Dict
+from typing import Any, Dict
+
 import httpx
-import pprint
+
+from .objects import College, CourseCategory, DegreeType, Semester
 
 
 class ParseException(Exception):
