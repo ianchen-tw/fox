@@ -1,8 +1,5 @@
-import pytest
-
-from crawler.objects import College, CourseCategory, DegreeType, Department
-
-from .type_parser import TypeParser
+from ..objects import College, CourseCategory, DegreeType, Department
+from ..type_parser import TypeParser
 
 
 def test_parse_degree_type():
