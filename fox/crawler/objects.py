@@ -1,7 +1,7 @@
-from enum import Enum
-from dataclasses import dataclass
-from typing import Dict, Optional
 import pprint
+from dataclasses import dataclass
+from enum import Enum
+from typing import Dict, Optional
 
 
 class Term(Enum):
@@ -36,8 +36,8 @@ class Course:
     def dump(self) -> str:
         infos = []
         infos.append(f"course_id: {self.course_id}")
-        infos.append(f"infos: " + pprint.pformat(self.info))
-        infos.append(f"tags: " + pprint.pformat(self.tags))
+        infos.append("infos: " + pprint.pformat(self.info))
+        infos.append("tags: " + pprint.pformat(self.tags))
         return "\n".join(infos)
 
 

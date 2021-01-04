@@ -1,6 +1,5 @@
-from crawler.objects import Term
-from crawler.crawler import Crawler
-from crawler.objects import Semester
+from .crawler.crawler import Crawler
+from .crawler.objects import Semester, Term
 
 
 def main():
@@ -9,7 +8,7 @@ def main():
 
 
 def get_all_course(sem: Semester):
-    deps = Crawler.get_deps(sem=sem, reuse=False)
+    _ = Crawler.get_deps(sem=sem, reuse=False)
     # for dep in deps:
     #     courses = Crawler.get_courses(sem=sem, dep=dep)
     #     for course in courses:
