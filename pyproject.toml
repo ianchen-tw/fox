@@ -14,12 +14,37 @@ attrs = "^20.2.0"
 httpx = "^0.16.1"
 pydantic = "^1.6.1"
 python = "^3.6"
+rich = "^9.6.1"
 trio = "^0.17.0"
 typer = {extras = ["all"], version = "^0.3.2"}
 
 [tool.poetry.dev-dependencies]
+autoflake = "^1.4"
 black = "^20.8b1"
+isort = "^5.7.0"
 pytest = "^6.1.1"
+rich = "^9.6.1"
+typer = "^0.3.2"
+
+[tool.black]
+line-length = 88
+
+exclude = '''
+/(
+    \.eggs
+  | \.git
+)
+'''
+
+[tool.isort]
+ensure_newline_before_comments = true
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 88
+multi_line_output = 3
+no_lines_before = "LOCALFOLDER"
+sections = 'FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER'
+use_parentheses = true
 
 [build-system]
 build-backend = "poetry.masonry.api"
