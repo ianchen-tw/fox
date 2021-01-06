@@ -2,7 +2,7 @@ import json
 import time
 from typing import Dict, List, Optional
 
-from .nctu_api_nteractor import NCTUAPI_Interactor
+from .nctu_api_interactor import NCTUAPI_Interactor
 from .objects import College, CourseCategory, DegreeType, Department, Semester
 from .Tool.progress import MyProgress as Progress
 from .type_parser import TypeParser
