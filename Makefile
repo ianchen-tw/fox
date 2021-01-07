@@ -7,7 +7,7 @@ test:
 	pytest
 
 testcov:
-	pytest --cov-report term-missing --cov=fox tests/
+	pytest --cov-report term-missing --cov=fox .
 
 # lint and format code
 define PRETTIER
