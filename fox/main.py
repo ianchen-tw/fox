@@ -1,10 +1,15 @@
+from rich.traceback import install
+
 from .crawler.crawler import Crawler
 from .crawler.objects import Semester, Term
 
 
 def main():
-    semester = Semester(year=109, term=Term.FIRST)
-    get_all_course(semester)
+    install(show_locals=True)
+    for year in [107, 108, 109]:
+        for term in [Term.FIRST, Term.SECOND, Term.SUMMER]:
+            semester = Semester(year=year, term=term)
+            get_all_course(semester)
 
 
 def get_all_course(sem: Semester):

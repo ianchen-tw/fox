@@ -6,6 +6,9 @@ ALL: test
 test:
 	pytest
 
+testcov:
+	pytest --cov-report term-missing --cov=fox .
+
 # lint and format code
 define PRETTIER
 	poetry run python3 scripts/prettier.py
