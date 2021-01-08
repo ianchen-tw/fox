@@ -1,7 +1,7 @@
-import json
 import time
-from typing import Dict, List, Optional
+from typing import List, Optional
 
+from .cache import Cache
 from .nctu_api_interactor import NCTUAPI_Interactor
 from .objects import College, CourseCategory, DegreeType, Department, Semester
 from .Tool.progress import MyProgress as Progress
@@ -13,25 +13,19 @@ class DepManager:
         self.nctu = NCTUAPI_Interactor()
         self.sem = sem
         self.reuse = reuse
-        self.dep_dict: Dict[str, Department] = {}
+        self.dep_list: List[Department] = []
 
     def run(self):
         if self.reuse:
-            self.load_from_cache()
-        if self.dep_dict == {}:
+            self.dep_list = Cache.dep_load(self.sem)
+        if self.dep_list == []:
             self.load_from_crawl()
-
-    def load_from_cache(self):
-        # TODO : load_from_cache
-        pass
 
     def load_from_crawl(self):
         with Progress(transient=True) as progress:
             self.prog = progress
             self.crawl(step=1)
-            with open("dep_dict.json", "w") as fp:
-                json_dict = {k: v.__dict__ for k, v in self.dep_dict.items()}
-                json.dump(json_dict, fp, ensure_ascii=False)
+            Cache.dep_dump(self.sem, self.get_deps())
 
     def crawl(self, step: int, **kwargs):
         func = {
@@ -72,10 +66,10 @@ class DepManager:
         deps = TypeParser.parse(deps, Department)
         for dep in self.prog.track(deps, description="[blue]Crawl Department..."):
             assert type(dep) is Department
-            if dep.uuid not in self.dep_dict:
-                self.dep_dict[dep.uuid] = dep
+            if dep not in self.dep_list:
+                self.dep_list.append(dep)
                 # print(f"callback: {dep}")
                 time.sleep(0.1)
 
     def get_deps(self) -> Optional[List[Department]]:
-        return list(self.dep_dict.values())
+        return self.dep_list
