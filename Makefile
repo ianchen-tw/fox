@@ -9,6 +9,10 @@ test:
 testcov:
 	pytest --cov-report term-missing --cov=fox .
 
+ready:
+	poetry shell
+	poetry install
+
 # lint and format code
 define PRETTIER
 	poetry run python3 scripts/prettier.py
