@@ -104,18 +104,20 @@ class TypeParser:
         data = get_first_value(json_data)
 
         courses = {}
+
+        # TODO: refactor each steps into separated function
         # parse data["1"] and data["2"]
         for key in [k for k in ["1", "2"] if k in data]:
             # '1', '2' contains the main and related courses
             for course_id, val in data[key].items():
-                if course_id not in courses:
-                    courses[course_id] = Course(
-                        **{
-                            "course_id": course_id,
-                            "info": val,
-                            "tags": {},
-                        }
-                    )
+                # TODO: test that duplicate courses are the same
+                courses[course_id] = Course(
+                    **{
+                        "course_id": course_id,
+                        "info": val,
+                        "tags": {},
+                    }
+                )
         # parse data["brief"]
         for course_id, brief in data["brief"].items():
             brief = get_first_value(brief).get("brief", "")

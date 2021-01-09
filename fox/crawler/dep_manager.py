@@ -61,14 +61,14 @@ class DepManager:
         else:
             self.crawl(step + 1, col=College(), **kwargs)
 
-    def crawl_department(self, step: int, **kwargs):
+    def crawl_department(self, step: int, **kwargs):  # noqa
+        # TODO: congestion control, makesure we respect the server
         deps = self.nctu.fetch_departments(self.sem, **kwargs)
         deps = TypeParser.parse(deps, Department)
         for dep in self.prog.track(deps, description="[blue]Crawl Department..."):
             assert type(dep) is Department
             if dep not in self.dep_list:
                 self.dep_list.append(dep)
-                # print(f"callback: {dep}")
                 time.sleep(0.1)
 
     def get_deps(self) -> Optional[List[Department]]:
