@@ -1,11 +1,15 @@
 import pprint
-from typing import Any, List, Type, Union
+from typing import Any, Dict, List, Type, Union
 
-from .objects import College, CourseCategory, DegreeType, Department
+from .objects import College, Course, CourseCategory, DegreeType, Department
 
-ParseType = Union[DegreeType, CourseCategory, College, Department]
+ParseType = Union[DegreeType, CourseCategory, College, Department, Course]
 ReturnParseType = Union[
-    List[DegreeType], List[CourseCategory], List[College], List[Department]
+    List[DegreeType],
+    List[CourseCategory],
+    List[College],
+    List[Department],
+    List[Course],
 ]
 
 
@@ -24,6 +28,7 @@ class TypeParser:
             CourseCategory: TypeParser.parse_course_category,
             College: TypeParser.parse_college,
             Department: TypeParser.parse_department,
+            Course: TypeParser.parse_course,
         }.get(parse_type, lambda x: [])
         return func(json_data)
 
@@ -87,3 +92,48 @@ class TypeParser:
                 dic = {"uuid": key.strip(), "name": value.strip()}
                 result.append(Department(**dic))
         return result
+
+    @staticmethod
+    def parse_course(json_data: Any) -> List[Course]:
+        def get_first_value(data: Dict[str, Any]) -> Dict:
+            return list(data.values())[0]
+
+        if not json_data:
+            return []
+
+        data = get_first_value(json_data)
+
+        courses = {}
+        # parse data["1"] and data["2"]
+        for key in [k for k in ["1", "2"] if k in data]:
+            # '1', '2' contains the main and related courses
+            for course_id, val in data[key].items():
+                if course_id not in courses:
+                    courses[course_id] = Course(
+                        **{
+                            "course_id": course_id,
+                            "info": val,
+                            "tags": {},
+                        }
+                    )
+        # parse data["brief"]
+        for course_id, brief in data["brief"].items():
+            brief = get_first_value(brief).get("brief", "")
+            if brief != "":
+                courses[course_id].tags["brief"] = brief.split(",")
+
+        # parse data["costype"]
+        for course_id, cos_type_infos in data["costype"].items():
+            for type_name, info in cos_type_infos.items():
+                if type_name != "":
+                    # create a list in courses[course_id].tags["cos_type"]
+                    if None == courses[course_id].tags.get("cos_type", None):
+                        courses[course_id].tags["cos_type"] = []
+                    courses[course_id].tags["cos_type"].append(type_name)
+
+        # parse data["language"]
+        for course_id, teach_lang in data["language"].items():
+            teach_lang = get_first_value(teach_lang)
+            courses[course_id].tags["teach_lang"] = teach_lang
+
+        return list(courses.values())

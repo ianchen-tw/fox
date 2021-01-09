@@ -1,8 +1,9 @@
 from typing import Any, Dict
 
 import httpx
+from rich import print
 
-from .objects import College, CourseCategory, DegreeType, Semester
+from .objects import College, CourseCategory, DegreeType, Department, Semester
 
 
 class ParseException(Exception):
@@ -65,3 +66,41 @@ class NCTUAPI_Interactor:
         form_data = self.get_form_data(sem, deg=deg, cat=cat, col=col)
         res = httpx.post(self.url, params=param, data=form_data)
         return res.json()
+
+    def fetch_course_raw_data(self, sem: Semester, dep: Department) -> Any:
+        param = {"r": "main/get_cos_list"}
+        not_important = [
+            "m_costype",
+            "m_crsoutline",
+            "m_crstime",
+            "m_cos_code",
+            "m_group",
+            "m_grade",
+            "m_class",
+            "m_option",
+            "m_crsname",
+            "m_teaname",
+            "m_cos_id",
+        ]
+        form_data = {
+            # "flang": "zh-tw",
+            "m_acy": str(sem.year),
+            "m_sem": sem.term.value,
+            "m_acyend": str(sem.year),
+            "m_semend": sem.term.value,
+            "m_dep_uid": dep.uuid,
+            **{key: "**" for key in not_important},
+        }
+        retry_times = 0
+        while retry_times < 3:
+            try:
+                res = httpx.post(self.url, params=param, data=form_data)
+                break
+            except httpx.ReadTimeout:
+                retry_times += 1
+
+        if retry_times >= 3:
+            print(f"retry failed: {dep}")
+            return None
+        else:
+            return res.json()  # type: ignore

@@ -24,6 +24,9 @@ class Department:
     uuid: str
     name: str
 
+    def __str__(self) -> str:
+        return f"{self.name}"
+
 
 @dataclass
 class Course:
