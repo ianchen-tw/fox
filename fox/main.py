@@ -16,7 +16,8 @@ def get_all_course(sem: Semester):
     deps = Crawler.get_deps(sem=sem, reuse=True)
     for dep in deps:
         _ = Crawler.get_courses(sem=sem, dep=dep)
-        # print(courses)
+    print("finish")
+    # print(courses)
     #     for course in courses:
     #         print(course)
 

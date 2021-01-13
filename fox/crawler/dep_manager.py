@@ -3,7 +3,8 @@ from typing import List, Optional
 
 from .cache import Cache
 from .nctu_api_interactor import NCTUAPI_Interactor
-from .objects import College, CourseCategory, DegreeType, Department, Semester
+from .objects import College, CourseCategory, DegreeType, Semester
+from .target_object.department import Department, DepController
 from .Tool.progress import MyProgress as Progress
 from .type_parser import TypeParser
 
@@ -63,8 +64,9 @@ class DepManager:
 
     def crawl_department(self, step: int, **kwargs):  # noqa
         # TODO: congestion control, makesure we respect the server
-        deps = self.nctu.fetch_departments(self.sem, **kwargs)
-        deps = TypeParser.parse(deps, Department)
+        dep_controller = DepController(self.sem, **kwargs)
+        deps = dep_controller.fetch()
+        deps = dep_controller.parse(deps)
         for dep in self.prog.track(deps, description="[blue]Crawl Department..."):
             assert type(dep) is Department
             if dep not in self.dep_list:
