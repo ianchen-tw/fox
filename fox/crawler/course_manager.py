@@ -1,18 +1,14 @@
 from typing import List
 
-from .target_object.course import CourseController, Course
-from .target_object.department import Department
-from .target_object.semester import Semester
+from .target_object.meta_object import Course, Department, Semester
 
 from .cache import Cache
-from .nctu_api_interactor import NCTUAPI_Interactor
+from .target_object.course import CourseController
 from .Tool.progress import MyProgress as Progress
-from .type_parser import TypeParser
 
 
 class CourseManager:
     def __init__(self, sem: Semester, dep: Department, reuse: bool = True) -> None:
-        self.nctu = NCTUAPI_Interactor()
         self.sem: Semester = sem
         self.dep: Department = dep
         self.reuse = reuse

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from .objects import Course, Department, Semester
+from .target_object.meta_object import Course, Department, Semester
 
 
 class Cache:

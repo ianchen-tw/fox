@@ -1,8 +1,8 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 import httpx
 
-from .objects import College, CourseCategory, DegreeType, Department, Semester
+from .target_object.meta_object import College, CourseCategory, DegreeType, Semester
 
 JSONType = Union[str, None, Dict[str, Any], List[Any]]
 
@@ -39,7 +39,7 @@ def get_form_data(
     return form_data
 
 
-def get_course_form_data(sem: Semester, dep: Department) -> Dict[str, str]:
+def get_course_form_data(sem: Semester, dep: "department.Department") -> Dict[str, str]:
     not_important = [
         "m_costype",
         "m_crsoutline",

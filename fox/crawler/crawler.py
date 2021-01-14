@@ -1,8 +1,9 @@
 from typing import List, Optional
 
+from .target_object.meta_object import Course, Department, Semester
+
 from .course_manager import CourseManager
 from .dep_manager import DepManager
-from .objects import Course, Department, Semester
 
 
 class Crawler:

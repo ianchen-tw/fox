@@ -1,21 +1,15 @@
 from dataclasses import dataclass
 from typing import List
 
+from .meta_object import (
+    College,
+    CourseCategory,
+    DegreeType,
+    Semester,
+)
+
 from ..fetch import fetch, get_form_data
-from ..objects import College, CourseCategory, DegreeType, Semester
 from .target_object_interface import I_TargetObject, JSONType
-
-
-@dataclass
-class College:
-    """Some department might not have college
-    in these case this field would be
-        code:'*'
-        name:'*'
-    """
-
-    code: str = "*"
-    name: str = "not available"
 
 
 class ColController(I_TargetObject):

@@ -1,7 +1,8 @@
-import pprint
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, Optional
+from dataclasses import dataclass
+from pprint import pprint
+from typing import Any, Dict, List, Optional
 
 
 class Term(Enum):
@@ -29,6 +30,35 @@ class Department:
 
 
 @dataclass
+class DegreeType:
+    """Undergrade, Graduate, PostDoc..."""
+
+    uuid: str
+    zh_name: str
+    en_name: str
+
+
+@dataclass
+class CourseCategory:
+    """Master, EMBA, inservice-masters"""
+
+    code: str = "*"
+    name: str = "not available"
+
+
+@dataclass
+class College:
+    """Some department might not have college
+    in these case this field would be
+        code:'*'
+        name:'*'
+    """
+
+    code: str = "*"
+    name: str = "not available"
+
+
+@dataclass
 class Course:
     """Raw course data sent from NCTU timetable"""
 
@@ -42,32 +72,3 @@ class Course:
         infos.append("infos: " + pprint.pformat(self.info))
         infos.append("tags: " + pprint.pformat(self.tags))
         return "\n".join(infos)
-
-
-@dataclass
-class DegreeType:
-    """Undergrade, Graduate, PostDoc..."""
-
-    uuid: str
-    zh_name: str
-    en_name: str
-
-
-@dataclass
-class CourseCategory:
-    """Master, EMBA, inservice-masters"""
-
-    code: str
-    name: str
-
-
-@dataclass
-class College:
-    """Some department might not have college
-    in these case this field would be
-        code:'*'
-        name:'*'
-    """
-
-    code: str = "*"
-    name: str = "not available"

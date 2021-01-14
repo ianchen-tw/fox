@@ -2,25 +2,10 @@ from dataclasses import dataclass
 from pprint import pprint
 from typing import Any, Dict, List, Optional
 
-from ..fetch import fetch, get_course_form_data, get_form_data
-from ..objects import College, CourseCategory, DegreeType, Department, Semester
+from .meta_object import Course, Semester, Department
+
+from ..fetch import fetch, get_course_form_data
 from .target_object_interface import I_TargetObject, JSONType
-
-
-@dataclass
-class Course:
-    """Raw course data sent from NCTU timetable"""
-
-    course_id: Optional[str] = None
-    info: Optional[Dict] = None
-    tags: Optional[Dict] = None
-
-    def dump(self) -> str:
-        infos = []
-        infos.append(f"course_id: {self.course_id}")
-        infos.append("infos: " + pprint.pformat(self.info))
-        infos.append("tags: " + pprint.pformat(self.tags))
-        return "\n".join(infos)
 
 
 class CourseController(I_TargetObject):

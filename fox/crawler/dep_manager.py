@@ -1,12 +1,13 @@
 import time
 from typing import List, Optional
 
+from .target_object.meta_object import Department, Semester
+
 from .cache import Cache
-from .objects import Semester
 from .target_object.college import ColController
 from .target_object.course_category import CatController
 from .target_object.degree_type import DegController
-from .target_object.department import Department, DepController
+from .target_object.department import DepController
 from .Tool.progress import MyProgress as Progress
 
 

@@ -1,18 +1,10 @@
 from dataclasses import dataclass
 from typing import List
 
+from .meta_object import DegreeType, Department, Semester, College, CourseCategory
+
 from ..fetch import fetch, get_form_data
-from ..objects import College, CourseCategory, DegreeType, Department, Semester
 from .target_object_interface import I_TargetObject, JSONType
-
-
-@dataclass
-class Department:
-    uuid: str
-    name: str
-
-    def __str__(self) -> str:
-        return f"{self.name}"
 
 
 class DepController(I_TargetObject):
