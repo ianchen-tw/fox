@@ -1,8 +1,11 @@
 from typing import List
 
+from .target_object.course import CourseController, Course
+from .target_object.department import Department
+from .target_object.semester import Semester
+
 from .cache import Cache
 from .nctu_api_interactor import NCTUAPI_Interactor
-from .objects import Course, Department, Semester
 from .Tool.progress import MyProgress as Progress
 from .type_parser import TypeParser
 
@@ -10,8 +13,8 @@ from .type_parser import TypeParser
 class CourseManager:
     def __init__(self, sem: Semester, dep: Department, reuse: bool = True) -> None:
         self.nctu = NCTUAPI_Interactor()
-        self.sem = sem
-        self.dep = dep
+        self.sem: Semester = sem
+        self.dep: Department = dep
         self.reuse = reuse
         self.course_list: List[Course] = []
 
@@ -29,10 +32,11 @@ class CourseManager:
             Cache.course_dump(self.sem, self.dep, self.course_list)
 
     def crawl_course(self):
-        courses = self.nctu.fetch_course_raw_data(self.sem, self.dep)
-        courses = TypeParser.parse(courses, Course)
-        for course in self.prog.track(courses, description="[yellow] Crawl Course..."):
-            assert type(course) is Course
+        course_controller = CourseController(self.sem, self.dep)
+        course_controller.crawl()
+        for course in self.prog.track(
+            course_controller.get_list(), description="[yellow] Crawl Course..."
+        ):
             if course not in self.course_list:
                 self.course_list.append(course)
 

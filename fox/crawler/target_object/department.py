@@ -37,7 +37,7 @@ class DepController(I_TargetObject):
         param = {"r": "main/get_dep"}
         form_data = get_form_data(self.sem, self.deg, self.cat, self.col)
         res = fetch(param, form_data)
-        return res.json()
+        return res
 
     def parse(self, json_data: JSONType):
         if type(json_data) != dict or not json_data:

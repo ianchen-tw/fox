@@ -32,7 +32,7 @@ class CatController(I_TargetObject):
         param = {"r": "main/get_category"}
         form_data = get_form_data(self.sem, self.deg)
         res = fetch(param, form_data)
-        return res.json()
+        return res
 
     def parse(self, json_data: JSONType):
         if type(json_data) == list:

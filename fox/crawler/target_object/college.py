@@ -46,7 +46,7 @@ class ColController(I_TargetObject):
         param = {"r": "main/get_college"}
         form_data = get_form_data(self.sem, self.deg, self.cat)
         res = fetch(param, form_data)
-        return res.json()
+        return res
 
     def parse(self, json_data: JSONType):
         result = []
