@@ -1,7 +1,8 @@
 from typing import Dict
 
 import httpx
-from .objects import College, CourseCategory, DegreeType, Department, Semester
+
+from .objects import College, CourseCategory, DegreeType, Semester
 
 
 def fetch(param: Dict[str, str], form_data: Dict[str, str]):
