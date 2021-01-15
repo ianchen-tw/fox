@@ -1,11 +1,9 @@
 import pprint
-from dataclasses import dataclass
 from typing import List
-
-from .meta_object import DegreeType, Semester
 
 from ..fetch import fetch, get_form_data
 from ..parse import ParseException
+from .meta_object import DegreeType, Semester
 from .target_object_interface import I_TargetObject, JSONType
 
 

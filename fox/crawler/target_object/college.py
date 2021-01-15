@@ -1,14 +1,7 @@
-from dataclasses import dataclass
 from typing import List
 
-from .meta_object import (
-    College,
-    CourseCategory,
-    DegreeType,
-    Semester,
-)
-
 from ..fetch import fetch, get_form_data
+from .meta_object import College, CourseCategory, DegreeType, Semester
 from .target_object_interface import I_TargetObject, JSONType
 
 

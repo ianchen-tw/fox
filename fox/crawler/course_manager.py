@@ -1,9 +1,8 @@
 from typing import List
 
-from .target_object.meta_object import Course, Department, Semester
-
 from .cache import Cache
 from .target_object.course import CourseController
+from .target_object.meta_object import Course, Department, Semester
 from .Tool.progress import MyProgress as Progress
 
 

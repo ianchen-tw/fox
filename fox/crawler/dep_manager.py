@@ -1,14 +1,22 @@
 import time
-from typing import List, Optional
-
-from .target_object.meta_object import Department, Semester
+from typing import Any, Dict, List, Optional, Union
 
 from .cache import Cache
 from .target_object.college import ColController
 from .target_object.course_category import CatController
 from .target_object.degree_type import DegController
 from .target_object.department import DepController
+from .target_object.meta_object import (
+    College,
+    CourseCategory,
+    DegreeType,
+    Department,
+    Semester,
+)
 from .Tool.progress import MyProgress as Progress
+
+Controller = Union[DegController, CatController, ColController, DepController]
+Param = Union[Semester, DegreeType, CourseCategory, College, Department]
 
 
 class DepManager:
@@ -26,52 +34,39 @@ class DepManager:
     def load_from_crawl(self):
         with Progress(transient=True) as progress:
             self.prog = progress
-            self.crawl(step=1)
+            self.crawl(sem=self.sem)
             Cache.dep_dump(self.sem, self.get_deps())
 
-    def crawl(self, step: int, **kwargs):
-        func = {
-            1: self.crawl_degree_type,
-            2: self.crawl_course_category,
-            3: self.crawl_college,
-            4: self.crawl_department,
+    def create_controller(self, step: int, **kwargs) -> Controller:
+        controller = {
+            1: DegController,
+            2: CatController,
+            3: ColController,
+            4: DepController,
         }.get(step)
-        func(step, **kwargs)
+        assert controller is not None
+        return controller(**kwargs)
 
-    def crawl_degree_type(self, step: int):
-        deg_controller = DegController(self.sem)
-        deg_controller.crawl()
-        for deg in self.prog.track(
-            deg_controller.get_list(), description="[red]Crawl Degree Type..."
-        ):
-            self.crawl(step + 1, deg=deg)
+    def add_param(self, new_param: Param, step: int, **kwargs) -> Dict[str, Any]:
+        param = {
+            1: "deg",
+            2: "cat",
+            3: "col",
+        }.get(step)
+        assert param is not None
+        kwargs[param] = new_param
+        return kwargs
 
-    def crawl_course_category(self, step: int, **kwargs):
-        cat_controller = CatController(self.sem, **kwargs)
-        cat_controller.crawl()
-        for cat in self.prog.track(
-            cat_controller.get_list(), description="[green]Crawl Course Category..."
-        ):
-            self.crawl(step + 1, cat=cat, **kwargs)
-
-    def crawl_college(self, step: int, **kwargs):
-        col_controller = ColController(self.sem, **kwargs)
-        col_controller.crawl()
-        for col in self.prog.track(
-            col_controller.get_list(), description="[cyan]Crawl College..."
-        ):
-            self.crawl(step + 1, col=col, **kwargs)
-
-    def crawl_department(self, step: int, **kwargs):  # noqa
-        # TODO: congestion control, makesure we respect the server
-        dep_controller = DepController(self.sem, **kwargs)
-        dep_controller.crawl()
-        for dep in self.prog.track(
-            dep_controller.get_list(), description="[blue]Crawl Department..."
-        ):
-            if dep not in self.dep_list:
-                self.dep_list.append(dep)
+    def crawl(self, step: int = 1, **kwargs):
+        controller = self.create_controller(step, **kwargs)
+        controller.crawl()
+        for object in self.prog.track(controller.get_list()):
+            if type(object) is Department:
+                self.dep_list.append(object)
                 time.sleep(0.1)
+            else:
+                kwargs = self.add_param(object, step, **kwargs)
+                self.crawl(step + 1, **kwargs)
 
     def get_deps(self) -> Optional[List[Department]]:
         return self.dep_list

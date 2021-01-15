@@ -1,5 +1,5 @@
-from .crawler.target_object.meta_object import Semester, Term
 from .crawler.crawler import Crawler
+from .crawler.target_object.meta_object import Semester, Term
 
 
 def main():

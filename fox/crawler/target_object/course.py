@@ -1,10 +1,7 @@
-from dataclasses import dataclass
-from pprint import pprint
-from typing import Any, Dict, List, Optional
-
-from .meta_object import Course, Semester, Department
+from typing import Any, Dict, List
 
 from ..fetch import fetch, get_course_form_data
+from .meta_object import Course, Department, Semester
 from .target_object_interface import I_TargetObject, JSONType
 
 
