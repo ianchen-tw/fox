@@ -1,7 +1,5 @@
 from typing import Any, List
 
-from rich import print as print
-
 from . import cache as cache
 from .target_object.course import CourseController as CourseController
 from .target_object.meta_object import Course as Course

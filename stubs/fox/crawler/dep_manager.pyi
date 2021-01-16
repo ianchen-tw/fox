@@ -1,7 +1,5 @@
 from typing import Any, Dict, List, Union
 
-from rich import print as print
-
 from . import cache as cache
 from .target_object.college import ColController as ColController
 from .target_object.course_category import CatController as CatController
