@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Dict
 
 import httpx
 
@@ -9,8 +9,7 @@ from .target_object.meta_object import (
     Department,
     Semester,
 )
-
-JSONType = Union[str, None, Dict[str, Any], List[Any]]
+from .types import JSONType
 
 
 def fetch(param: Dict[str, str], form_data: Dict[str, str]) -> JSONType:

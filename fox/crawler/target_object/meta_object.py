@@ -1,7 +1,7 @@
-from dataclasses import dataclass
+import pprint
+from dataclasses import dataclass, field
 from enum import Enum
-from pprint import pprint
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 
 class Term(Enum):
@@ -62,8 +62,8 @@ class Course:
     """Raw course data sent from NCTU timetable"""
 
     course_id: Optional[str] = None
-    info: Optional[Dict] = None
-    tags: Optional[Dict] = None
+    info: Optional[Dict[str, str]] = None
+    tags: Dict[str, Any] = field(default_factory=dict)
 
     def dump(self) -> str:
         infos = []

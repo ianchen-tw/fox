@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from .target_object.meta_object import Course, Department, Semester
+from .types import JSONType
 
 
 class Cache:
@@ -41,7 +42,8 @@ class Cache:
         path = Cache.get_path() / str(sem) / "course" / f"{str(dep)}.json"
         try:
             with open(path, "rb") as fp:
-                data: List[Dict[str, str]] = json.load(fp)
+                data: JSONType = json.load(fp)
+                assert isinstance(data, list)
                 return [Course(**d) for d in data]
         except FileNotFoundError:
             return []

@@ -22,16 +22,16 @@ class CourseController(I_TargetObject):
         return res
 
     def parse(self, json_data: JSONType):
-        def get_first_value(data: Dict[str, Any]) -> Dict:
+        def get_first_value(data: Dict[str, Any]) -> Dict[str, Any]:
             return list(data.values())[0]
 
         if not json_data:
             return []
 
-        assert type(json_data) is dict
+        assert isinstance(json_data, dict)
         data = get_first_value(json_data)
 
-        courses = {}
+        courses: Dict[str, Course] = {}
 
         # TODO: refactor each steps into separated function
         # parse data["1"] and data["2"]

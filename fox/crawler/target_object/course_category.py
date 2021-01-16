@@ -28,7 +28,7 @@ class CatController(I_TargetObject):
     def parse(self, json_data: JSONType):
         if type(json_data) == list:
             return [CourseCategory()]
-        assert type(json_data) is dict
+        assert isinstance(json_data, dict)
         result = []
         for key, value in json_data.items():
             if value:

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from .course_manager import CourseManager
 from .dep_manager import DepManager
@@ -7,7 +7,7 @@ from .target_object.meta_object import Course, Department, Semester
 
 class Crawler:
     @staticmethod
-    def get_deps(sem: Semester, reuse: bool = True) -> Optional[List[Department]]:
+    def get_deps(sem: Semester, reuse: bool = True) -> List[Department]:
         dep_manager = DepManager(sem, reuse)
         dep_manager.run()
         deps = dep_manager.get_deps()

@@ -1,5 +1,5 @@
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 from .cache import Cache
 from .target_object.college import ColController
@@ -68,5 +68,5 @@ class DepManager:
                 kwargs = self.add_param(object, step, **kwargs)
                 self.crawl(step + 1, **kwargs)
 
-    def get_deps(self) -> Optional[List[Department]]:
+    def get_deps(self) -> List[Department]:
         return self.dep_list

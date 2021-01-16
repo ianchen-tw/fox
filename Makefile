@@ -13,6 +13,10 @@ ready:
 	poetry shell
 	poetry install
 
+stubgen :
+	stubgen fox -o stubs
+	make better
+
 # lint and format code
 define PRETTIER
 	poetry run python3 scripts/prettier.py

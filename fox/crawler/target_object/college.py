@@ -39,7 +39,7 @@ class ColController(I_TargetObject):
         result = []
         if type(json_data) == list:
             return [College()]
-        assert type(json_data) is dict
+        assert isinstance(json_data, dict)
         for key, value in json_data.items():
             # TODO: we shouldn't handle this error at all,
             # Instead, we should not call this method ( or just return a dummy college object)

@@ -23,7 +23,7 @@ class DegController(I_TargetObject):
         return res
 
     def parse(self, json_data: JSONType):
-        assert type(json_data) is list
+        assert isinstance(json_data, list)
         result = []
         for d in json_data:
             try:
