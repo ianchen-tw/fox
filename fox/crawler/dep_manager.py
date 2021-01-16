@@ -1,7 +1,8 @@
+import json
 import time
 from typing import Any, Dict, List, Union
 
-from .cache import Cache
+from . import cache
 from .target_object.college import ColController
 from .target_object.course_category import CatController
 from .target_object.degree_type import DegController
@@ -14,6 +15,7 @@ from .target_object.meta_object import (
     Semester,
 )
 from .Tool.progress import MyProgress as Progress
+from .types import JSONType
 
 Controller = Union[DegController, CatController, ColController, DepController]
 Param = Union[Semester, DegreeType, CourseCategory, College, Department]
@@ -24,18 +26,27 @@ class DepManager:
         self.sem = sem
         self.reuse = reuse
         self.dep_list: List[Department] = []
+        self.save_path = cache.get_path() / str(sem) / "dep_uuid_list.json"
 
     def run(self):
         if self.reuse:
-            self.dep_list = Cache.dep_load(self.sem)
+            self.load_from_cache()
         if self.dep_list == []:
             self.load_from_crawl()
+            self.dump()
+
+    def load_from_cache(self):
+        try:
+            with open(self.save_path, "rb") as fp:
+                data: JSONType = json.load(fp)
+                self.dep_list = [Department(**d) for d in data]
+        except FileNotFoundError:
+            self.dep_list = []
 
     def load_from_crawl(self):
         with Progress(transient=True) as progress:
             self.prog = progress
             self.crawl(sem=self.sem)
-            Cache.dep_dump(self.sem, self.get_deps())
 
     def create_controller(self, step: int, **kwargs) -> Controller:
         controller = {
@@ -67,6 +78,12 @@ class DepManager:
             else:
                 kwargs = self.add_param(object, step, **kwargs)
                 self.crawl(step + 1, **kwargs)
+
+    def dump(self):
+        self.save_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.save_path, "w") as fp:
+            json_data = [dep.__dict__ for dep in self.dep_list]
+            json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 
     def get_deps(self) -> List[Department]:
         return self.dep_list
