@@ -11,14 +11,9 @@ def main():
     #     for term in [Term.FIRST, Term.SECOND, Term.SUMMER]:
     year = 109
     term = Term.FIRST
-    semester = Semester(year=year, term=term)
-    get_all_course(semester)
-
-
-def get_all_course(sem: Semester):
+    sem = Semester(year=year, term=term)
     deps = get_deps(sem=sem, reuse=True)
-    for dep in deps:
-        _ = get_courses(sem=sem, dep=dep)
+    _ = get_courses(sem=sem, deps=deps)
     print("finish")
     # print(courses)
     #     for course in courses:
@@ -32,10 +27,14 @@ def get_deps(sem: Semester, reuse: bool = True) -> List[Department]:
     return deps
 
 
-def get_courses(sem: Semester, dep: Department, reuse: bool = True) -> List[Course]:
-    course_manager = CourseManager(sem, dep, reuse)
-    course_manager.run()
-    courses = course_manager.get_courses()
+def get_courses(
+    sem: Semester, deps: List[Department], reuse: bool = True
+) -> List[Course]:
+    courses: List[Course] = []
+    for dep in deps:
+        course_manager = CourseManager(sem, dep, reuse)
+        course_manager.run()
+        courses.extend(course_manager.get_courses())
     return courses
 
 
