@@ -34,7 +34,6 @@ class CourseManager:
     def load_from_crawl(self):
         with Progress(transient=True) as progress:
             self.prog = progress
-            self.prog = progress
             self.crawl_course()
 
     def crawl_course(self):
