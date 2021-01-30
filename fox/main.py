@@ -1,12 +1,15 @@
 from typing import List
 
+from rich.progress import track
+from rich.traceback import install
+
 from .crawler.course_manager import CourseManager
 from .crawler.dep_manager import DepManager
 from .crawler.target_object.meta_object import Course, Department, Semester, Term
 
 
 def main():
-    # install(show_locals=True)
+    install(show_locals=True)
     # for year in [107, 108, 109]:
     #     for term in [Term.FIRST, Term.SECOND, Term.SUMMER]:
     year = 109
@@ -31,7 +34,7 @@ def get_courses(
     sem: Semester, deps: List[Department], reuse: bool = True
 ) -> List[Course]:
     courses: List[Course] = []
-    for dep in deps:
+    for dep in track(deps, transient=True, description="[yellow] Crawl Course..."):
         course_manager = CourseManager(sem, dep, reuse)
         course_manager.run()
         courses.extend(course_manager.get_courses())

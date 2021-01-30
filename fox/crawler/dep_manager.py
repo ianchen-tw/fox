@@ -45,7 +45,12 @@ class DepManager:
 
     def load_from_crawl(self):
         with Progress(transient=True) as progress:
+            # TODO: show now/total
             self.prog = progress
+            self.total = 1
+            self.task = progress.add_task(
+                f"[red]Sem {str(self.sem)} Departments Crawl...", total=self.total
+            )
             self.crawl(sem=self.sem)
 
     def create_controller(self, step: int, **kwargs) -> Controller:
@@ -71,7 +76,11 @@ class DepManager:
     def crawl(self, step: int = 1, **kwargs):
         controller = self.create_controller(step, **kwargs)
         controller.crawl()
-        for object in self.prog.track(controller.get_list()):
+        objects = controller.get_list()
+        if objects and type(objects[0]) is not Department:
+            self.total += len(objects)
+        self.prog.update(self.task, total=self.total, advance=1)
+        for object in objects:
             if type(object) is Department:
                 self.dep_list.append(object)
                 time.sleep(0.1)

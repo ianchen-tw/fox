@@ -32,16 +32,12 @@ class CourseManager:
             self.course_list = []
 
     def load_from_crawl(self):
-        with Progress(transient=True) as progress:
-            self.prog = progress
-            self.crawl_course()
+        self.crawl_course()
 
     def crawl_course(self):
         course_controller = CourseController(self.sem, self.dep)
         course_controller.crawl()
-        for course in self.prog.track(
-            course_controller.get_list(), description="[yellow] Crawl Course..."
-        ):
+        for course in course_controller.get_list():
             if course not in self.course_list:
                 self.course_list.append(course)
 
