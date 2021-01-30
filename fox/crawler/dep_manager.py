@@ -2,6 +2,8 @@ import json
 import time
 from typing import Any, Dict, List, Union
 
+from rich.progress import BarColumn, TextColumn
+
 from . import cache
 from .target_object.college import ColController
 from .target_object.course_category import CatController
@@ -37,15 +39,21 @@ class DepManager:
 
     def load_from_cache(self):
         try:
-            with open(self.save_path, "rb") as fp:
+            with open(self.save_path, "r", encoding="utf-8") as fp:
                 data: JSONType = json.load(fp)
                 self.dep_list = [Department(**d) for d in data]
         except FileNotFoundError:
             self.dep_list = []
 
     def load_from_crawl(self):
-        with Progress(transient=True) as progress:
-            # TODO: show now/total
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TextColumn("[blue]{task.completed}/{task.total}"),
+            TextColumn("(96)"),  # as for reference (109 first)
+            transient=True,
+        ) as progress:
             self.prog = progress
             self.total = 1
             self.task = progress.add_task(
@@ -90,7 +98,7 @@ class DepManager:
 
     def dump(self):
         self.save_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.save_path, "w") as fp:
+        with open(self.save_path, "w", encoding="utf-8") as fp:
             json_data = [dep.__dict__ for dep in self.dep_list]
             json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 

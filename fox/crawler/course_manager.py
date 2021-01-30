@@ -4,7 +4,6 @@ from typing import List
 from . import cache
 from .target_object.course import CourseController
 from .target_object.meta_object import Course, Department, Semester
-from .Tool.progress import MyProgress as Progress
 from .types import JSONType
 
 
