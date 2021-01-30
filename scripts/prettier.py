@@ -4,6 +4,7 @@ import argparse
 import subprocess as sp
 from pathlib import Path
 from sys import exit as sys_exit
+from typing import Union
 
 from rich.console import Console
 
@@ -45,13 +46,14 @@ def log(msg: str):
     console.log(f"[yellow]{msg}[/]")
 
 
-def lint_project(folder: Path):
+def lint_project(folder: Union[str, Path]):
+    folder = str(folder)
     log(f"Lint code: {folder}")
-    sp.run(["pyflakes", folder]).check_returncode()
+    sp.run(["pyflakes", str(folder)]).check_returncode()
 
 
-def format_project(folder: Path):
-
+def format_project(folder: Union[str, Path]):
+    folder = str(folder)
     log(f"Format code: {folder}")
     sp.run(["black", folder]).check_returncode()
 

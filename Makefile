@@ -19,7 +19,7 @@ stubgen :
 
 # lint and format code
 define PRETTIER
-	poetry run python3 scripts/prettier.py
+	poetry run python scripts/prettier.py
 endef
 better:
 	$(PRETTIER) all
