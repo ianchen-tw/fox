@@ -1,12 +1,12 @@
 import json
-from typing import Any, List, Mapping
+from dataclasses import asdict
+from typing import List
 
 from . import cache
 from .target_object.course import CourseController
 from .target_object.meta_object import Course, Department, Semester
 from .Tool.progress import MyProgress as Progress
 from .types import JSONType
-from dataclasses import asdict
 
 
 class CourseManager:
