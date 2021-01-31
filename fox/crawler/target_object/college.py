@@ -26,10 +26,9 @@ class ColController(I_TargetObject):
 
     def fetch(self) -> JSONType:
         """Only when degree type equals to "master degree" or "undergrad"
-        would have to query colleges..
+        would have to query colleges.., and this is done by self.crawl()
         and in actual query dep api the college could leave as '*'
         """
-        # TODO: we have to detect the deg type in outer loop code and not query at all
         param = {"r": "main/get_college"}
         form_data = get_form_data(self.sem, self.deg, self.cat)
         res = fetch(param, form_data)
@@ -41,9 +40,6 @@ class ColController(I_TargetObject):
             return [College()]
         assert isinstance(json_data, dict)
         for key, value in json_data.items():
-            # TODO: we shouldn't handle this error at all,
-            # Instead, we should not call this method ( or just return a dummy college object)
-            # the degree type is not master or undergrad
             if value:
                 dic = {"code": key.strip(), "name": value.strip()}
                 col = College(**dic)
