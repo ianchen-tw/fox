@@ -6,6 +6,7 @@ from .target_object.course import CourseController
 from .target_object.meta_object import Course, Department, Semester
 from .Tool.progress import MyProgress as Progress
 from .types import JSONType
+from dataclasses import asdict
 
 
 class CourseManager:
@@ -48,7 +49,7 @@ class CourseManager:
     def dump(self):
         self.save_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.save_path, "w") as fp:
-            json_data = [course.__dict__ for course in self.course_list]
+            json_data = [asdict(course) for course in self.course_list]
             json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 
     def get_courses(self) -> List[Course]:

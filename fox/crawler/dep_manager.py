@@ -1,3 +1,4 @@
+from dataclasses import asdict
 import json
 import time
 from typing import Any, Dict, List, Union
@@ -82,7 +83,7 @@ class DepManager:
     def dump(self):
         self.save_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.save_path, "w") as fp:
-            json_data = [dep.__dict__ for dep in self.dep_list]
+            json_data = [asdict(dep) for dep in self.dep_list]
             json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 
     def get_deps(self) -> List[Department]:
