@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import Any, List, Mapping
 
 from . import cache
 from .target_object.course import CourseController
@@ -28,8 +28,8 @@ class CourseManager:
         try:
             with open(self.save_path, "rb") as fp:
                 data: JSONType = json.load(fp)
-                self.course_list = [Course(**d) for d in data]
-        except FileNotFoundError:
+                self.course_list = [Course(**d) for d in data if not isinstance(d, str)]
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
             self.course_list = []
 
     def load_from_crawl(self):

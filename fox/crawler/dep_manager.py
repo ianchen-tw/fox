@@ -40,8 +40,10 @@ class DepManager:
         try:
             with open(self.save_path, "rb") as fp:
                 data: JSONType = json.load(fp)
-                self.dep_list = [Department(**d) for d in data]
-        except FileNotFoundError:
+                self.dep_list = [
+                    Department(**d) for d in data if not isinstance(d, str)
+                ]
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
             self.dep_list = []
 
     def load_from_crawl(self):
