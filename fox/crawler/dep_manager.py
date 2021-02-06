@@ -1,75 +1,92 @@
+import json
 import time
-from typing import List, Optional
+from dataclasses import asdict
+from typing import Any, Dict, List, Union
 
-from .cache import Cache
-from .nctu_api_interactor import NCTUAPI_Interactor
-from .objects import College, CourseCategory, DegreeType, Department, Semester
+from . import cache
+from .target_object.college import ColController
+from .target_object.course_category import CatController
+from .target_object.degree_type import DegController
+from .target_object.department import DepController
+from .target_object.meta_object import (
+    College,
+    CourseCategory,
+    DegreeType,
+    Department,
+    Semester,
+)
 from .Tool.progress import MyProgress as Progress
-from .type_parser import TypeParser
+from .types import JSONType
+
+Controller = Union[DegController, CatController, ColController, DepController]
+Param = Union[Semester, DegreeType, CourseCategory, College, Department]
 
 
 class DepManager:
     def __init__(self, sem: Semester, reuse: bool = True) -> None:
-        self.nctu = NCTUAPI_Interactor()
         self.sem = sem
         self.reuse = reuse
         self.dep_list: List[Department] = []
+        self.save_path = cache.get_path() / str(sem) / "dep_uuid_list.json"
 
     def run(self):
         if self.reuse:
-            self.dep_list = Cache.dep_load(self.sem)
+            self.load_from_cache()
         if self.dep_list == []:
             self.load_from_crawl()
+            self.dump()
+
+    def load_from_cache(self):
+        try:
+            with open(self.save_path, "rb") as fp:
+                data: JSONType = json.load(fp)
+                self.dep_list = [
+                    Department(**d) for d in data if not isinstance(d, str)
+                ]
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
+            self.dep_list = []
 
     def load_from_crawl(self):
         with Progress(transient=True) as progress:
             self.prog = progress
-            self.crawl(step=1)
-            Cache.dep_dump(self.sem, self.get_deps())
+            self.crawl(sem=self.sem)
 
-    def crawl(self, step: int, **kwargs):
-        func = {
-            1: self.crawl_degree_type,
-            2: self.crawl_course_category,
-            3: self.crawl_college,
-            4: self.crawl_department,
+    def create_controller(self, step: int, **kwargs) -> Controller:
+        controller = {
+            1: DegController,
+            2: CatController,
+            3: ColController,
+            4: DepController,
         }.get(step)
-        func(step, **kwargs)
+        assert controller is not None
+        return controller(**kwargs)
 
-    def crawl_degree_type(self, step: int):
-        degs = self.nctu.fetch_degree_type(self.sem)
-        degs = TypeParser.parse(degs, DegreeType)
-        for deg in self.prog.track(degs, description="[red]Crawl Degree Type..."):
-            assert type(deg) is DegreeType
-            self.crawl(step + 1, deg=deg)
+    def add_param(self, new_param: Param, step: int, **kwargs) -> Dict[str, Any]:
+        param = {
+            1: "deg",
+            2: "cat",
+            3: "col",
+        }.get(step)
+        assert param is not None
+        kwargs[param] = new_param
+        return kwargs
 
-    def crawl_course_category(self, step: int, **kwargs):
-        cats = self.nctu.fetch_course_category(self.sem, **kwargs)
-        cats = TypeParser.parse(cats, CourseCategory)
-        for cat in self.prog.track(cats, description="[green]Crawl Course Category..."):
-            assert type(cat) is CourseCategory
-            self.crawl(step + 1, cat=cat, **kwargs)
-
-    def crawl_college(self, step: int, deg: DegreeType, **kwargs):
-        kwargs["deg"] = deg
-        if deg.zh_name in ["研究所課程", "學士班課程"]:
-            cols = self.nctu.fetch_colleges(self.sem, **kwargs)
-            cols = TypeParser.parse(cols, College)
-            for col in self.prog.track(cols, description="[cyan]Crawl College..."):
-                assert type(col) is College
-                self.crawl(step + 1, col=col, **kwargs)
-        else:
-            self.crawl(step + 1, col=College(), **kwargs)
-
-    def crawl_department(self, step: int, **kwargs):  # noqa
-        # TODO: congestion control, makesure we respect the server
-        deps = self.nctu.fetch_departments(self.sem, **kwargs)
-        deps = TypeParser.parse(deps, Department)
-        for dep in self.prog.track(deps, description="[blue]Crawl Department..."):
-            assert type(dep) is Department
-            if dep not in self.dep_list:
-                self.dep_list.append(dep)
+    def crawl(self, step: int = 1, **kwargs):
+        controller = self.create_controller(step, **kwargs)
+        controller.crawl()
+        for object in self.prog.track(controller.get_list()):
+            if type(object) is Department:
+                self.dep_list.append(object)
                 time.sleep(0.1)
+            else:
+                kwargs = self.add_param(object, step, **kwargs)
+                self.crawl(step + 1, **kwargs)
 
-    def get_deps(self) -> Optional[List[Department]]:
+    def dump(self):
+        self.save_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.save_path, "w") as fp:
+            json_data = [asdict(dep) for dep in self.dep_list]
+            json.dump(json_data, fp, indent="\t", ensure_ascii=False)
+
+    def get_deps(self) -> List[Department]:
         return self.dep_list

@@ -1,7 +1,7 @@
 import pprint
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 
 class Term(Enum):
@@ -29,22 +29,6 @@ class Department:
 
 
 @dataclass
-class Course:
-    """Raw course data sent from NCTU timetable"""
-
-    course_id: Optional[str] = None
-    info: Optional[Dict] = None
-    tags: Optional[Dict] = None
-
-    def dump(self) -> str:
-        infos = []
-        infos.append(f"course_id: {self.course_id}")
-        infos.append("infos: " + pprint.pformat(self.info))
-        infos.append("tags: " + pprint.pformat(self.tags))
-        return "\n".join(infos)
-
-
-@dataclass
 class DegreeType:
     """Undergrade, Graduate, PostDoc..."""
 
@@ -57,8 +41,8 @@ class DegreeType:
 class CourseCategory:
     """Master, EMBA, inservice-masters"""
 
-    code: str
-    name: str
+    code: str = "*"
+    name: str = "not available"
 
 
 @dataclass
@@ -71,3 +55,19 @@ class College:
 
     code: str = "*"
     name: str = "not available"
+
+
+@dataclass
+class Course:
+    """Raw course data sent from NCTU timetable"""
+
+    course_id: Optional[str] = None
+    info: Optional[Dict[str, str]] = None
+    tags: Dict[str, Any] = field(default_factory=dict)
+
+    def dump(self) -> str:
+        infos = []
+        infos.append(f"course_id: {self.course_id}")
+        infos.append("infos: " + pprint.pformat(self.info))
+        infos.append("tags: " + pprint.pformat(self.tags))
+        return "\n".join(infos)
