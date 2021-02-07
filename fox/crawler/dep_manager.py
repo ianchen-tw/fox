@@ -1,5 +1,6 @@
 import json
 import time
+from dataclasses import asdict
 from typing import Any, Dict, List, Union
 
 from rich.progress import BarColumn, TextColumn
@@ -41,8 +42,10 @@ class DepManager:
         try:
             with open(self.save_path, "r", encoding="utf-8") as fp:
                 data: JSONType = json.load(fp)
-                self.dep_list = [Department(**d) for d in data]
-        except FileNotFoundError:
+                self.dep_list = [
+                    Department(**d) for d in data if not isinstance(d, str)
+                ]
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
             self.dep_list = []
 
     def load_from_crawl(self):
