@@ -3,7 +3,7 @@ import time
 from dataclasses import asdict
 from typing import Any, Dict, List, Union
 
-from rich.progress import BarColumn, TextColumn
+from rich.progress import BarColumn, Progress, TextColumn
 
 from . import cache
 from .target_object.college import ColController
@@ -17,7 +17,6 @@ from .target_object.meta_object import (
     Department,
     Semester,
 )
-from .Tool.progress import MyProgress as Progress
 from .types import JSONType
 
 Controller = Union[DegController, CatController, ColController, DepController]
@@ -102,7 +101,7 @@ class DepManager:
     def dump(self):
         self.save_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.save_path, "w", encoding="utf-8") as fp:
-            json_data = [dep.__dict__ for dep in self.dep_list]
+            json_data = [asdict(dep) for dep in self.dep_list]
             json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 
     def get_deps(self) -> List[Department]:
