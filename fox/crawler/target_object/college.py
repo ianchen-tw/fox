@@ -2,10 +2,10 @@ from typing import List
 
 from ..fetch import fetch, get_form_data
 from .meta_object import College, CourseCategory, DegreeType, Semester
-from .target_object_interface import I_TargetObject, JSONType
+from .target_object_interface import CrawlTarget, JSONType
 
 
-class ColController(I_TargetObject):
+class ColController(CrawlTarget):
     def __init__(
         self,
         sem: Semester,

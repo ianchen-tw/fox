@@ -2,10 +2,10 @@ from typing import Any, Dict, List
 
 from ..fetch import fetch, get_course_form_data
 from .meta_object import Course, Department, Semester
-from .target_object_interface import I_TargetObject, JSONType
+from .target_object_interface import CrawlTarget, JSONType
 
 
-class CourseController(I_TargetObject):
+class CourseController(CrawlTarget):
     def __init__(self, sem: Semester, dep: Department) -> None:
         self.sem: Semester = sem
         self.dep: Department = dep

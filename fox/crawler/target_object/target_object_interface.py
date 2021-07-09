@@ -1,22 +1,19 @@
-from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Union
+
+from typing_extensions import Protocol
 
 JSONType = Union[str, None, Dict[str, Any], List[Any]]
 
 
-class I_TargetObject(ABC):
-    @abstractmethod
+class CrawlTarget(Protocol):
     def fetch(self):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def parse(self, json_data: JSONType):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def crawl(self):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def get_list(self):
-        pass
+        raise NotImplementedError

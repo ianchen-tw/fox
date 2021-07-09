@@ -4,10 +4,10 @@ from typing import List
 from ..fetch import fetch, get_form_data
 from ..parse import ParseException
 from .meta_object import DegreeType, Semester
-from .target_object_interface import I_TargetObject, JSONType
+from .target_object_interface import CrawlTarget, JSONType
 
 
-class DegController(I_TargetObject):
+class DegController(CrawlTarget):
     def __init__(self, sem: Semester) -> None:
         self.sem: Semester = sem
         self.data_list: List[DegreeType] = []
