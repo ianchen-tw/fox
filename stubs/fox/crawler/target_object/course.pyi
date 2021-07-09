@@ -5,10 +5,10 @@ from ..fetch import get_course_form_data as get_course_form_data
 from .meta_object import Course as Course
 from .meta_object import Department as Department
 from .meta_object import Semester as Semester
-from .target_object_interface import I_TargetObject as I_TargetObject
+from .target_object_interface import CrawlTarget as CrawlTarget
 from .target_object_interface import JSONType as JSONType
 
-class CourseController(I_TargetObject):
+class CourseController(CrawlTarget):
     sem: Any = ...
     dep: Any = ...
     data_list: Any = ...

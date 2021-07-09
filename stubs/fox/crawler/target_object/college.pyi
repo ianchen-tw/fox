@@ -6,10 +6,10 @@ from .meta_object import College as College
 from .meta_object import CourseCategory as CourseCategory
 from .meta_object import DegreeType as DegreeType
 from .meta_object import Semester as Semester
-from .target_object_interface import I_TargetObject as I_TargetObject
+from .target_object_interface import CrawlTarget as CrawlTarget
 from .target_object_interface import JSONType as JSONType
 
-class ColController(I_TargetObject):
+class ColController(CrawlTarget):
     sem: Any = ...
     deg: Any = ...
     cat: Any = ...

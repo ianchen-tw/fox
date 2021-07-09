@@ -7,10 +7,10 @@ from .meta_object import CourseCategory as CourseCategory
 from .meta_object import DegreeType as DegreeType
 from .meta_object import Department as Department
 from .meta_object import Semester as Semester
-from .target_object_interface import I_TargetObject as I_TargetObject
+from .target_object_interface import CrawlTarget as CrawlTarget
 from .target_object_interface import JSONType as JSONType
 
-class DepController(I_TargetObject):
+class DepController(CrawlTarget):
     sem: Any = ...
     deg: Any = ...
     cat: Any = ...
