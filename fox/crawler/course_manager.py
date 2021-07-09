@@ -5,7 +5,6 @@ from typing import List
 from . import cache
 from .target_object.course import CourseController
 from .target_object.meta_object import Course, Department, Semester
-from .Tool.progress import MyProgress as Progress
 from .types import JSONType
 
 
@@ -33,22 +32,18 @@ class CourseManager:
             self.course_list = []
 
     def load_from_crawl(self):
-        with Progress(transient=True) as progress:
-            self.prog = progress
-            self.crawl_course()
+        self.crawl_course()
 
     def crawl_course(self):
         course_controller = CourseController(self.sem, self.dep)
         course_controller.crawl()
-        for course in self.prog.track(
-            course_controller.get_list(), description="[yellow] Crawl Course..."
-        ):
+        for course in course_controller.get_list():
             if course not in self.course_list:
                 self.course_list.append(course)
 
     def dump(self):
         self.save_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.save_path, "w") as fp:
+        with open(self.save_path, "w", encoding="utf-8") as fp:
             json_data = [asdict(course) for course in self.course_list]
             json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 

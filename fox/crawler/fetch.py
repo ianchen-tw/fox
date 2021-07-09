@@ -13,7 +13,7 @@ from .types import JSONType
 
 
 def fetch(param: Dict[str, str], form_data: Dict[str, str]) -> JSONType:
-    url: str = "https://timetable.nctu.edu.tw/"
+    url: str = "https://timetable.nycu.edu.tw/"
     retry_times = 0
     while retry_times < 3:
         try:

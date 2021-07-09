@@ -3,6 +3,8 @@ import time
 from dataclasses import asdict
 from typing import Any, Dict, List, Union
 
+from rich.progress import BarColumn, Progress, TextColumn
+
 from . import cache
 from .target_object.college import ColController
 from .target_object.course_category import CatController
@@ -15,7 +17,6 @@ from .target_object.meta_object import (
     Department,
     Semester,
 )
-from .Tool.progress import MyProgress as Progress
 from .types import JSONType
 
 Controller = Union[DegController, CatController, ColController, DepController]
@@ -38,7 +39,7 @@ class DepManager:
 
     def load_from_cache(self):
         try:
-            with open(self.save_path, "rb") as fp:
+            with open(self.save_path, "r", encoding="utf-8") as fp:
                 data: JSONType = json.load(fp)
                 self.dep_list = [
                     Department(**d) for d in data if not isinstance(d, str)
@@ -47,8 +48,19 @@ class DepManager:
             self.dep_list = []
 
     def load_from_crawl(self):
-        with Progress(transient=True) as progress:
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TextColumn("[blue]{task.completed}/{task.total}"),
+            TextColumn("(96)"),  # as for reference (109 first)
+            transient=True,
+        ) as progress:
             self.prog = progress
+            self.total = 1
+            self.task = progress.add_task(
+                f"[red]Sem {str(self.sem)} Departments Crawl...", total=self.total
+            )
             self.crawl(sem=self.sem)
 
     def create_controller(self, step: int, **kwargs) -> Controller:
@@ -74,7 +86,11 @@ class DepManager:
     def crawl(self, step: int = 1, **kwargs):
         controller = self.create_controller(step, **kwargs)
         controller.crawl()
-        for object in self.prog.track(controller.get_list()):
+        objects = controller.get_list()
+        if objects and type(objects[0]) is not Department:
+            self.total += len(objects)
+        self.prog.update(self.task, total=self.total, advance=1)
+        for object in objects:
             if type(object) is Department:
                 self.dep_list.append(object)
                 time.sleep(0.1)
@@ -84,7 +100,7 @@ class DepManager:
 
     def dump(self):
         self.save_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.save_path, "w") as fp:
+        with open(self.save_path, "w", encoding="utf-8") as fp:
             json_data = [asdict(dep) for dep in self.dep_list]
             json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 
