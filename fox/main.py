@@ -3,20 +3,27 @@ from typing import List
 from rich.progress import track
 from rich.traceback import install
 
-from .crawler.course_manager import CourseManager
-from .crawler.dep_manager import DepManager
-from .crawler.target_object.meta_object import Course, Department, Semester, Term
+from fox.course_manager import CourseManager
+from fox.dep_manager import DepManager
+from fox.schemas import Course, Department, Semester, Term
+from fox.dep_lists import cache_get_deps
 
 
 def main():
     install(show_locals=True)
+
+    # sem = Semester(year=108, term=Term.SECOND)
+    # data = cache_get_deps(sem)
+    # print(data)
+    # return
+
     # for year in [107, 108, 109]:
     #     for term in [Term.FIRST, Term.SECOND, Term.SUMMER]:
-    year = 109
-    term = Term.FIRST
+    year = 108
+    term = Term.SUMMER
     sem = Semester(year=year, term=term)
     deps = get_deps(sem=sem, reuse=True)
-    _ = get_courses(sem=sem, deps=deps)
+    # _ = get_courses(sem=sem, deps=deps)
     print("finish")
     # print(courses)
     #     for course in courses:
@@ -27,6 +34,7 @@ def get_deps(sem: Semester, reuse: bool = True) -> List[Department]:
     dep_manager = DepManager(sem, reuse)
     dep_manager.run()
     deps = dep_manager.get_deps()
+    dep_manager.condense()
     return deps
 
 

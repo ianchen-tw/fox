@@ -50,6 +50,7 @@ def lint_project(folder: Union[str, Path]):
     folder = str(folder)
     log(f"Lint code: {folder}")
     sp.run(["pyflakes", str(folder)]).check_returncode()
+    sp.run(["mypy", str(folder)]).check_returncode()
 
 
 def format_project(folder: Union[str, Path]):

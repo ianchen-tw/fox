@@ -4,7 +4,7 @@ PRETTIER_CMDS:= better format lint
 ALL: test
 
 test:
-	pytest
+	pytest tests
 
 testcov:
 	pytest --cov-report term-missing --cov=fox .
@@ -14,6 +14,7 @@ ready:
 	poetry install
 
 stubgen :
+	rm -rf stubs
 	stubgen fox -o stubs
 	make better
 

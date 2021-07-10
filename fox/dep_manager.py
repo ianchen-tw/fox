@@ -1,22 +1,21 @@
 import json
 import time
+from collections import defaultdict
 from dataclasses import asdict
 from typing import Any, Dict, List, Union
 
+import rich
 from rich.progress import BarColumn, Progress, TextColumn
 
 from . import cache
-from .target_object.college import ColController
-from .target_object.course_category import CatController
-from .target_object.degree_type import DegController
-from .target_object.department import DepController
-from .target_object.meta_object import (
-    College,
-    CourseCategory,
-    DegreeType,
-    Department,
-    Semester,
+from .crawl_targets import (
+    CatController,
+    ColController,
+    CrawlTarget,
+    DegController,
+    DepController,
 )
+from .schemas import College, CourseCategory, DegreeType, Department, Semester
 from .types import JSONType
 
 Controller = Union[DegController, CatController, ColController, DepController]
@@ -63,7 +62,7 @@ class DepManager:
             )
             self.crawl(sem=self.sem)
 
-    def create_controller(self, step: int, **kwargs) -> Controller:
+    def create_controller(self, step: int, **kwargs) -> CrawlTarget:
         controller = {
             1: DegController,
             2: CatController,
@@ -84,7 +83,7 @@ class DepManager:
         return kwargs
 
     def crawl(self, step: int = 1, **kwargs):
-        controller = self.create_controller(step, **kwargs)
+        controller: CrawlTarget = self.create_controller(step, **kwargs)
         controller.crawl()
         objects = controller.get_list()
         if objects and type(objects[0]) is not Department:
@@ -106,3 +105,42 @@ class DepManager:
 
     def get_deps(self) -> List[Department]:
         return self.dep_list
+
+    def condense(self):
+        """Clean dep_list data"""
+        # may have duplicate department data
+        # or multiple name for the same uuid (usually alias)
+
+        def first_and_only(s: set):
+            if len(s) > 1 or len(s) == 0:
+                raise RuntimeError("input should only have one item")
+            return next(iter(s))
+
+        def dump_result(sem: Semester, dep_list: List[Department]):
+            filename = f"./data_{sem.year}_{sem.term.value}.py"
+            with open(filename, "w", encoding="utf-8") as f:
+                json_data = [asdict(dep) for dep in dep_list]
+                code = "data = "
+                code += json.dumps(json_data, indent="  ", ensure_ascii=False)
+                f.write(code)
+
+        uuid_2_names: Dict[str, set] = defaultdict(set)
+        for dep in self.dep_list:
+            uuid_2_names[dep.uuid].add(dep.name)
+
+        result = []
+        # TODO: add log for department with multiple deps/names
+        for uuid, dep_names in uuid_2_names.items():
+            dep: Department
+            if len(dep_names) > 1:
+                longest_desc = max(dep_names, key=lambda x: len(x))
+                dep = Department(uuid=uuid, name=longest_desc)
+            else:
+                dep = Department(uuid=uuid, name=first_and_only(dep_names))
+            result.append(dep)
+
+        rich.print(result)
+
+        dump_result(sem=self.sem, dep_list=result)
+        # print(dic)
+        # print("good")

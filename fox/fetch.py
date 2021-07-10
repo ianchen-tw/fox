@@ -2,13 +2,7 @@ from typing import Dict
 
 import httpx
 
-from .target_object.meta_object import (
-    College,
-    CourseCategory,
-    DegreeType,
-    Department,
-    Semester,
-)
+from .schemas import College, CourseCategory, DegreeType, Department, Semester
 from .types import JSONType
 
 

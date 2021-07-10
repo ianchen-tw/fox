@@ -15,6 +15,11 @@ class Semester:
     year: int
     term: Term
 
+    @classmethod
+    def from_digit(cls, year: int, term_str: str) -> "Semester":
+        t = Term(term_str)
+        return cls(year=year, term=t)
+
     def __str__(self) -> str:
         return f"{self.year}{self.term.value}"
 
