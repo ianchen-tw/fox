@@ -3,8 +3,8 @@ from dataclasses import asdict
 from typing import List
 
 from . import cache
-from .target_object.course import CourseController
-from .target_object.meta_object import Course, Department, Semester
+from .crawl_targets import CourseController
+from .schemas import Course, Department, Semester
 from .types import JSONType
 
 
