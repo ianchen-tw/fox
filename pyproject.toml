@@ -16,7 +16,6 @@ pydantic = "^1.6.1"
 python = "^3.6"
 rich = "^9.6.1"
 trio = "^0.17.0"
-typer = {extras = ["all"], version = "^0.3.2"}
 typing-extensions = "^3.10.0"
 
 [tool.poetry.dev-dependencies]
@@ -27,7 +26,6 @@ mypy = "^0.790"
 pytest = "^6.1.1"
 pytest-cov = "^2.10.1"
 rich = "^9.6.1"
-typer = "^0.3.2"
 
 [tool.black]
 line-length = 88
