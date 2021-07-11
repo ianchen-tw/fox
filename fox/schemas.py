@@ -1,27 +1,29 @@
 import pprint
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Dict, Optional
+from dataclasses import field, dataclass
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional
+
+from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    # add hint for code intellisense
+    from dataclasses import dataclass as syntax_complete
+else:
+
+    def syntax_complete(model):
+        return model
 
 
-class Term(Enum):
-    FIRST = "1"
-    SECOND = "2"
-    SUMMER = "X"
-
-
-@dataclass
-class Semester:
+@syntax_complete
+class Semester(BaseModel):
     year: int
-    term: Term
 
-    @classmethod
-    def from_digit(cls, year: int, term_str: str) -> "Semester":
-        t = Term(term_str)
-        return cls(year=year, term=t)
+    # 1: first
+    # 2: second
+    # X: summer
+    term: Literal["1", "2", "X"]
 
     def __str__(self) -> str:
-        return f"{self.year}{self.term.value}"
+        return f"{self.year}{self.term}"
 
 
 @dataclass

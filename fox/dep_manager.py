@@ -117,7 +117,7 @@ class DepManager:
             return next(iter(s))
 
         def dump_result(sem: Semester, dep_list: List[Department]):
-            filename = f"./data_{sem.year}_{sem.term.value}.py"
+            filename = f"./data_{sem.year}_{sem.term}.py"
             with open(filename, "w", encoding="utf-8") as f:
                 json_data = [asdict(dep) for dep in dep_list]
                 code = "data = "

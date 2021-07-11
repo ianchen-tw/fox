@@ -1,4 +1,4 @@
-from fox.dep_lists import *
+from fox.dep_lists import cache_get_deps, cached_sems
 
 
 def test_cache_terms_import():

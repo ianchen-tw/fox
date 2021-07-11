@@ -1,29 +1,28 @@
 import importlib
 from typing import List
 
-from fox.schemas import Department, Semester, Term
-
+from fox.schemas import Department, Semester
 
 # cached_sems = [(108, "1"), (109, "1")]
 
 # only cache for 3 year
 cached_sems = [
-    Semester.from_digit(year=110, term_str="1"),
+    Semester(year=110, term="1"),
     #
-    Semester.from_digit(year=109, term_str="X"),
-    Semester.from_digit(year=109, term_str="2"),
-    Semester.from_digit(year=109, term_str="1"),
+    Semester(year=109, term="X"),
+    Semester(year=109, term="2"),
+    Semester(year=109, term="1"),
     #
-    Semester.from_digit(year=108, term_str="X"),
-    Semester.from_digit(year=108, term_str="2"),
-    Semester.from_digit(year=108, term_str="1"),
+    Semester(year=108, term="X"),
+    Semester(year=108, term="2"),
+    Semester(year=108, term="1"),
 ]
 
 
 def cache_get_deps(sem: Semester):
     data: List[Department]
     # try:
-    module = importlib.import_module(f"fox.dep_lists.data_{sem.year}_{sem.term.value}")
+    module = importlib.import_module(f"fox.dep_lists.data_{sem.year}_{sem.term}")
     data = module.data
     return data
     # except Exception as e:

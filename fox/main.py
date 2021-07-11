@@ -5,8 +5,7 @@ from rich.traceback import install
 
 from fox.course_manager import CourseManager
 from fox.dep_manager import DepManager
-from fox.schemas import Course, Department, Semester, Term
-from fox.dep_lists import cache_get_deps
+from fox.schemas import Course, Department, Semester
 
 
 def main():
@@ -20,7 +19,7 @@ def main():
     # for year in [107, 108, 109]:
     #     for term in [Term.FIRST, Term.SECOND, Term.SUMMER]:
     year = 108
-    term = Term.SUMMER
+    term = "1"
     sem = Semester(year=year, term=term)
     deps = get_deps(sem=sem, reuse=True)
     # _ = get_courses(sem=sem, deps=deps)
