@@ -3,7 +3,13 @@ from typing import Any, Dict, List, Union
 
 from typing_extensions import Protocol
 
-from fox.api.form_types import College, CourseCategory, DegreeType, Department
+from fox.api.form_types import (
+    CodedOptions,
+    College,
+    CourseCategory,
+    DegreeType,
+    Department,
+)
 from fox.types import Course, Semester
 from .fetch import fetch, get_course_form_data, get_form_data
 
@@ -101,14 +107,8 @@ class CatController(CrawlTarget):
         if type(json_data) == list:
             return [CourseCategory()]
         assert isinstance(json_data, dict)
-        result = []
-        for key, value in json_data.items():
-            if value:
-                dic = {"code": key.strip(), "name": value.strip()}
-                cat = CourseCategory(**dic)
-            else:
-                cat = CourseCategory()
-            result.append(cat)
+        options = CodedOptions.from_coded_dict(json_data)
+        result = [CourseCategory(code=opt.code, name=opt.value) for opt in options]
         return result
 
     def get_list(self):
@@ -248,11 +248,8 @@ class DepController(CrawlTarget):
         if type(json_data) != dict or not json_data:
             return []
         assert isinstance(json_data, dict)
-        result = []
-        for key, value in json_data.items():
-            if value:
-                dic = {"uuid": key.strip(), "name": value.strip()}
-                result.append(Department(**dic))
+        options = CodedOptions.from_coded_dict(json_data)
+        result = [Department(uuid=opt.code, name=opt.value) for opt in options]
         return result
 
     def get_list(self):

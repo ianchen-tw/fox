@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, List
 
 """ Contain raw data format that school accept/receive
 """
@@ -11,6 +11,24 @@ else:
 
     def syntax_complete(model):
         return model
+
+
+@dataclass
+class CodedOptions:
+    code: str
+    value: str
+
+    @classmethod
+    def from_coded_dict(cls, data: Dict, strip: bool = True) -> List["CodedOptions"]:
+        """Parse from an special type of dict
+        which every key-value pair represent a row of coded data
+        """
+        res = []
+        for k, v in data.items():
+            if strip:
+                k, v = str(k).strip(), str(v).strip()
+            res.append(cls(code=k, value=v))
+        return res
 
 
 @dataclass
