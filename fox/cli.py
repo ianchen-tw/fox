@@ -7,9 +7,9 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
+from fox.api.dep import DepManager
 from fox.config import Config
-from fox.dep_manager import DepManager
-from fox.schemas import Semester
+from fox.types import Semester
 
 if TYPE_CHECKING:
     from dataclasses import dataclass

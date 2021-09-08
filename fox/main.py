@@ -3,9 +3,10 @@ from typing import List
 from rich.progress import track
 from rich.traceback import install
 
-from fox.course_manager import CourseManager
-from fox.dep_manager import DepManager
-from fox.schemas import Course, Department, Semester
+from fox.api.course import CourseManager
+from fox.api.dep import DepManager
+from fox.api.form_types import Department
+from fox.types import Course, Semester
 
 
 def main():
@@ -18,10 +19,10 @@ def main():
 
     # for year in [107, 108, 109]:
     #     for term in [Term.FIRST, Term.SECOND, Term.SUMMER]:
-    year = 108
+    year = 110
     term = "1"
     sem = Semester(year=year, term=term)
-    deps = get_deps(sem=sem, reuse=True)
+    _ = get_deps(sem=sem, reuse=True)
     # _ = get_courses(sem=sem, deps=deps)
     print("finish")
     # print(courses)

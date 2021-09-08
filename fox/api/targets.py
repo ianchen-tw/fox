@@ -3,18 +3,15 @@ from typing import Any, Dict, List, Union
 
 from typing_extensions import Protocol
 
-from fox.fetch import fetch, get_course_form_data, get_form_data
-from fox.parse import ParseException
-from fox.schemas import (
-    College,
-    Course,
-    CourseCategory,
-    DegreeType,
-    Department,
-    Semester,
-)
+from fox.api.form_types import College, CourseCategory, DegreeType, Department
+from fox.types import Course, Semester
+from .fetch import fetch, get_course_form_data, get_form_data
 
 JSONType = Union[str, None, Dict[str, Any], List[Any]]
+
+
+class ParseException(Exception):
+    pass
 
 
 class CrawlTarget(Protocol):

@@ -7,18 +7,18 @@ from typing import Any, Dict, List, Union
 import rich
 from rich.progress import BarColumn, Progress, TextColumn
 
-from . import cache
-from .crawl_targets import (
+from fox.api.form_types import College, CourseCategory, DegreeType, Department
+from fox.api.targets import (
     CatController,
     ColController,
     CrawlTarget,
     DegController,
     DepController,
 )
-from .schemas import College, CourseCategory, DegreeType, Department, Semester
-from .types import JSONType
+from fox.types import JSONType, Semester
+from fox.util import get_cache_path
 
-Controller = Union[DegController, CatController, ColController, DepController]
+# Controller = Union[DegController, CatController, ColController, DepController]
 Param = Union[Semester, DegreeType, CourseCategory, College, Department]
 
 
@@ -27,7 +27,7 @@ class DepManager:
         self.sem = sem
         self.reuse = reuse
         self.dep_list: List[Department] = []
-        self.save_path = cache.get_path() / str(sem) / "dep_uuid_list.json"
+        self.save_path = get_cache_path() / str(sem) / "dep_uuid_list.json"
 
     def run(self):
         if self.reuse:
@@ -117,7 +117,7 @@ class DepManager:
             return next(iter(s))
 
         def dump_result(sem: Semester, dep_list: List[Department]):
-            filename = f"./data_{sem.year}_{sem.term}.py"
+            filename = f"./dep_{sem.year}_{sem.term}.py"
             with open(filename, "w", encoding="utf-8") as f:
                 json_data = [asdict(dep) for dep in dep_list]
                 code = "data = "

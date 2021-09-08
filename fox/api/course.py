@@ -2,10 +2,10 @@ import json
 from dataclasses import asdict
 from typing import List
 
-from . import cache
-from .crawl_targets import CourseController
-from .schemas import Course, Department, Semester
-from .types import JSONType
+from fox.api.form_types import Department
+from fox.api.targets import CourseController
+from fox.types import Course, JSONType, Semester
+from fox.util import get_cache_path
 
 
 class CourseManager:
@@ -14,7 +14,7 @@ class CourseManager:
         self.dep: Department = dep
         self.reuse = reuse
         self.course_list: List[Course] = []
-        self.save_path = cache.get_path() / str(sem) / "course" / f"{str(dep)}.json"
+        self.save_path = get_cache_path() / str(sem) / "course" / f"{str(dep)}.json"
 
     def run(self):
         if self.reuse:

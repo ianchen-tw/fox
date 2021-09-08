@@ -2,8 +2,8 @@ from typing import Dict
 
 import httpx
 
-from .schemas import College, CourseCategory, DegreeType, Department, Semester
-from .types import JSONType
+from fox.types import JSONType, Semester
+from .form_types import College, CourseCategory, DegreeType, Department
 
 
 def fetch(param: Dict[str, str], form_data: Dict[str, str]) -> JSONType:
@@ -55,9 +55,9 @@ def get_course_form_data(sem: Semester, dep: Department) -> Dict[str, str]:
     form_data = {
         # "flang": "zh-tw",
         "m_acy": str(sem.year),
-        "m_sem": sem.term.value,
+        "m_sem": sem.term,
         "m_acyend": str(sem.year),
-        "m_semend": sem.term.value,
+        "m_semend": sem.term,
         "m_dep_uid": dep.uuid,
         **{key: "**" for key in not_important},
     }
