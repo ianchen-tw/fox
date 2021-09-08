@@ -66,18 +66,11 @@ class ColController(CrawlTarget):
         return res
 
     def parse(self, json_data: JSONType):
-        result = []
         if type(json_data) == list:
             return [College()]
         assert isinstance(json_data, dict)
-        for key, value in json_data.items():
-            if value:
-                dic = {"code": key.strip(), "name": value.strip()}
-                col = College(**dic)
-            else:
-                col = College()
-            result.append(col)
-        return result
+        options = CodedOptions.from_coded_dict(json_data)
+        return [College(code=opt.code, name=opt.value) for opt in options]
 
     def get_list(self):
         return self.data_list
