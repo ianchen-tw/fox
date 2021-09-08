@@ -42,7 +42,9 @@ class Department:
 
 @dataclass
 class DegreeType:
-    """Undergrade, Graduate, PostDoc..."""
+    """Undergrade, Graduate, PostDoc...
+    Will be triggered on chaning semester
+    """
 
     uuid: str
     zh_name: str

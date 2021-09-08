@@ -1,6 +1,6 @@
-import pprint
 from typing import Any, Dict, List, Union
 
+from pydantic import BaseModel
 from typing_extensions import Protocol
 
 from fox.api.form_types import (
@@ -199,22 +199,17 @@ class DegController(CrawlTarget):
 
     def parse(self, json_data: JSONType):
         assert isinstance(json_data, list)
-        result = []
-        for d in json_data:
-            try:
-                dic = {
-                    "uuid": d["uid"],
-                    "zh_name": d["cname"].strip(),
-                    "en_name": d["ename"].strip(),
-                }
-                result.append(DegreeType(**dic))
-            except KeyError as e:
-                info = [
-                    f"DegreeTypeParser/ unable to get key({e}) in data",
-                    pprint.pformat(json_data, indent=4),
-                ]
-                raise ParseException("\n".join(info))
-        return result
+
+        class RawRecord(BaseModel):
+            uid: str
+            cname: str  # chinese name
+            ename: str  # english name
+
+        raw_records = [RawRecord(**d) for d in json_data]
+        return [
+            DegreeType(uuid=r.uid, zh_name=r.cname.strip(), en_name=r.ename.strip())
+            for r in raw_records
+        ]
 
     def get_list(self):
         return self.data_list
