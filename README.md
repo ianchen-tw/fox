@@ -1,5 +1,7 @@
 # fox
 
+![logo](./res/fox-logo.png)
+
 Retrieve courses from nctu timetable.
 
 ## Commands
