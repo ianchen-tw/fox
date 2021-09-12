@@ -1,3 +1,4 @@
+import typing
 from typing import Any, Dict, List, Union
 
 from pydantic import BaseModel
@@ -12,8 +13,10 @@ from fox.api.form_types import (
 )
 from fox.types import Course, Semester
 from .fetch import fetch, get_course_form_data, get_form_data
+from .parse_course import RawFormat, SingleItemDict, parse_courses
 
 JSONType = Union[str, None, Dict[str, Any], List[Any]]
+# T = TypeVar("T")
 
 
 class ParseException(Exception):
@@ -125,51 +128,13 @@ class CourseController(CrawlTarget):
         return res
 
     def parse(self, json_data: JSONType):
-        def get_first_value(data: Dict[str, Any]) -> Dict[str, Any]:
-            return list(data.values())[0]
-
         if not json_data:
             return []
-
-        assert isinstance(json_data, dict)
-        data = get_first_value(json_data)
-
-        courses: Dict[str, Course] = {}
-
-        # TODO: refactor each steps into separated function
-        # parse data["1"] and data["2"]
-        for key in [k for k in ["1", "2"] if k in data]:
-            # '1', '2' contains the main and related courses
-            for course_id, val in data[key].items():
-                # TODO: test that duplicate courses are the same
-                courses[course_id] = Course(
-                    **{
-                        "course_id": course_id,
-                        "info": val,
-                        "tags": {},
-                    }
-                )
-        # parse data["brief"]
-        for course_id, brief in data["brief"].items():
-            brief = get_first_value(brief).get("brief", "")
-            if brief != "":
-                courses[course_id].tags["brief"] = brief.split(",")
-
-        # parse data["costype"]
-        for course_id, cos_type_infos in data["costype"].items():
-            for type_name, info in cos_type_infos.items():
-                if type_name != "":
-                    # create a list in courses[course_id].tags["cos_type"]
-                    if None == courses[course_id].tags.get("cos_type", None):
-                        courses[course_id].tags["cos_type"] = []
-                    courses[course_id].tags["cos_type"].append(type_name)
-
-        # parse data["language"]
-        for course_id, teach_lang in data["language"].items():
-            teach_lang = get_first_value(teach_lang)
-            courses[course_id].tags["teach_lang"] = teach_lang
-
-        return list(courses.values())
+        json_data = typing.cast(Dict[str, Any], json_data)
+        data = SingleItemDict(json_data).unpack()
+        handle = RawFormat(**data)
+        courses = parse_courses(handle)
+        return courses
 
     def get_list(self):
         return self.data_list

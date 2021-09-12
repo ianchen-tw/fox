@@ -1,6 +1,7 @@
-import json
-from dataclasses import asdict
 from typing import List
+
+import simplejson as json
+from attr import asdict
 
 from fox.api.form_types import Department
 from fox.api.targets import CourseController

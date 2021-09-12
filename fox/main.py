@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from rich.progress import track
 from rich.traceback import install
@@ -22,12 +22,12 @@ def main():
     year = 110
     term = "1"
     sem = Semester(year=year, term=term)
-    _ = get_deps(sem=sem, reuse=True)
-    # _ = get_courses(sem=sem, deps=deps)
+    _deps = get_deps(sem=sem, reuse=True)
+    _courses = get_courses(sem=sem, deps=_deps, limit_deps=["(醫學系)"])
     print("finish")
-    # print(courses)
-    #     for course in courses:
-    #         print(course)
+    print(_courses)
+    for course in _courses:
+        print(course)
 
 
 def get_deps(sem: Semester, reuse: bool = True) -> List[Department]:
@@ -39,9 +39,16 @@ def get_deps(sem: Semester, reuse: bool = True) -> List[Department]:
 
 
 def get_courses(
-    sem: Semester, deps: List[Department], reuse: bool = True
+    sem: Semester,
+    deps: List[Department],
+    limit_deps: Optional[List[str]] = None,
+    reuse: bool = True,
 ) -> List[Course]:
     courses: List[Course] = []
+
+    if limit_deps is not None:
+        deps = [dep for dep in deps if (dep.name in limit_deps)]
+
     for dep in track(deps, transient=True, description="[yellow] Crawl Course..."):
         course_manager = CourseManager(sem, dep, reuse)
         course_manager.run()

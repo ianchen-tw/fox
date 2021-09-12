@@ -1,7 +1,7 @@
-import pprint
-from dataclasses import dataclass, field
+from decimal import Decimal
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union
 
+from attr import attrib, attrs
 from pydantic import BaseModel
 
 JSONType = Union[str, None, Dict[str, Any], List[Any]]
@@ -28,17 +28,41 @@ class Semester(BaseModel):
         return f"{self.year}{self.term}"
 
 
-@dataclass
+@attrs
+class ClassTime:
+    time_code: int  # 時間(Weekday+timeslot)
+    room_code: str  # 教室代碼
+    loc_code: Optional[str]  # 校區代碼
+
+
+@attrs(auto_attribs=True, repr=True, str=True)
+class CourseInfo:
+    academic_year: int
+    semester: str
+    dep_name_en: str
+    dep_name_zh: str
+    course_number: str
+    perm_code: str
+    credits: Decimal
+    register_limit: Optional[int]
+    # todo: convert to classTime
+    course_time: str
+    teachers: str
+    teach_hours: Decimal
+    type_zh: str
+    type_en: str
+    name_zh: str
+    name_en: str
+    memo: str
+
+
+@attrs(auto_attribs=True, repr=True, str=True)
 class Course:
-    """Raw course data sent from NCTU timetable"""
+    # Basic information
+    info: CourseInfo
 
-    course_id: Optional[str] = None
-    info: Optional[Dict[str, str]] = None
-    tags: Dict[str, Any] = field(default_factory=dict)
+    # the id used by the identifier
+    api_id: str
 
-    def dump(self) -> str:
-        infos = []
-        infos.append(f"course_id: {self.course_id}")
-        infos.append("infos: " + pprint.pformat(self.info))
-        infos.append("tags: " + pprint.pformat(self.tags))
-        return "\n".join(infos)
+    # Some auxiliary data
+    tags: List[str] = attrib(factory=list)
