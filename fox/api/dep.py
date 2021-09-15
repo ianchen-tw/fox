@@ -15,7 +15,8 @@ from fox.api.targets import (
     DegController,
     DepController,
 )
-from fox.types import JSONType, Semester
+from fox.cache import FoxCache
+from fox.types import Semester
 from fox.util import get_cache_path
 
 # Controller = Union[DegController, CatController, ColController, DepController]
@@ -27,24 +28,21 @@ class DepManager:
         self.sem = sem
         self.reuse = reuse
         self.dep_list: List[Department] = []
-        self.save_path = get_cache_path() / str(sem) / "dep_uuid_list.json"
+
+        self.cache = FoxCache(
+            target_path=get_cache_path() / f"{sem}/dep_uuid_list.json",
+            encode_func=lambda dep_list: [asdict(dep) for dep in dep_list],
+            decode_func=lambda data: [Department(**d) for d in data],
+        )
 
     def run(self):
         if self.reuse:
-            self.load_from_cache()
+            dep_list = self.cache.load()
+            self.dep_list = dep_list if dep_list is not None else []
+
         if self.dep_list == []:
             self.load_from_crawl()
-            self.dump()
-
-    def load_from_cache(self):
-        try:
-            with open(self.save_path, "r", encoding="utf-8") as fp:
-                data: JSONType = json.load(fp)
-                self.dep_list = [
-                    Department(**d) for d in data if not isinstance(d, str)
-                ]
-        except (FileNotFoundError, json.decoder.JSONDecodeError):
-            self.dep_list = []
+            self.cache.save(self.dep_list)
 
     def load_from_crawl(self):
         with Progress(
@@ -96,12 +94,6 @@ class DepManager:
             else:
                 kwargs = self.add_param(object, step, **kwargs)
                 self.crawl(step + 1, **kwargs)
-
-    def dump(self):
-        self.save_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.save_path, "w", encoding="utf-8") as fp:
-            json_data = [asdict(dep) for dep in self.dep_list]
-            json.dump(json_data, fp, indent="\t", ensure_ascii=False)
 
     def get_deps(self) -> List[Department]:
         return self.dep_list
