@@ -34,3 +34,17 @@ def test_cache_decoder(tmp_path):
     cache.save([1, 5, 10])
     obj = cache.load()
     assert obj == [0, 4, 9]
+
+
+def test_cache_corrupt(tmp_path):
+    target = tmp_path / "test.json"
+    with open(target, "w") as fp:
+        fp.write('{"a":a')
+    cache = FoxCache(target_path=target)
+    assert cache.load() is None
+
+
+def test_cache_no_file(tmp_path):
+    target = tmp_path / "something_not_existed.json"
+    cache = FoxCache(target_path=target)
+    assert cache.load() is None
