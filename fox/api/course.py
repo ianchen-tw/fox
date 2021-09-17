@@ -20,7 +20,7 @@ class CourseManager:
         self.cache = FoxCache(
             target_path=get_cache_path() / f"{self.sem}/course/{self.dep.name}.json",
             encode_func=lambda courses: [asdict(c) for c in courses],
-            decode_func=lambda data: [Course(**d) for d in data],
+            decode_func=lambda data: [Course.from_dict(**d) for d in data],
         )
 
     def run(self):

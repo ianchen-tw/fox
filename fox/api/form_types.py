@@ -31,7 +31,7 @@ class CodedOptions:
         return res
 
 
-@dataclass
+@dataclass(frozen=True)
 class Department:
     uuid: str
     name: str

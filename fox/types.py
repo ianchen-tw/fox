@@ -66,3 +66,10 @@ class Course:
 
     # Some auxiliary data
     tags: List[str] = attrib(factory=list)
+
+    @classmethod
+    def from_dict(cls, *args, **kwargs):
+        _info = kwargs["info"]
+        info = CourseInfo(**_info)
+        return cls(info=info, api_id=kwargs["api_id"], tags=kwargs["tags"])
+        pass
