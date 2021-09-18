@@ -30,6 +30,7 @@ class CourseManager:
         if self.course_list == []:
             self.load_from_crawl()
             self.cache.save(self.course_list)
+        return self
 
     def load_from_crawl(self):
         self.crawl_course()
@@ -40,6 +41,7 @@ class CourseManager:
         for course in course_controller.get_list():
             if course not in self.course_list:
                 self.course_list.append(course)
+        return self
 
     def get_courses(self) -> List[Course]:
         return self.course_list
