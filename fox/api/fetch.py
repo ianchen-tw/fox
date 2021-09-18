@@ -2,16 +2,16 @@ from typing import Dict
 
 import httpx
 
+from fox.config import config
 from fox.types import JSONType, Semester
 from .form_types import College, CourseCategory, DegreeType, Department
 
 
 def fetch(param: Dict[str, str], form_data: Dict[str, str]) -> JSONType:
-    url: str = "https://timetable.nycu.edu.tw/"
     retry_times = 0
     while retry_times < 3:
         try:
-            res = httpx.post(url, params=param, data=form_data)
+            res = httpx.post(config.timetable_url, params=param, data=form_data)
             return res.json()
         except httpx.ReadTimeout:
             retry_times += 1

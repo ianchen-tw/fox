@@ -16,8 +16,8 @@ from fox.api.targets import (
     DepController,
 )
 from fox.cache import FoxCache
+from fox.config import config
 from fox.types import Semester
-from fox.util import get_cache_path
 
 # Controller = Union[DegController, CatController, ColController, DepController]
 Param = Union[Semester, DegreeType, CourseCategory, College, Department]
@@ -30,7 +30,8 @@ class DepManager:
         self.dep_list: List[Department] = []
 
         self.cache = FoxCache(
-            target_path=get_cache_path() / f"{sem}/dep_uuid_list.json",
+            target_path=config.cache_base_folder_path
+            / f"{sem}/{config.cache_dep_uuid_file_name}",
             encode_func=lambda dep_list: [asdict(dep) for dep in dep_list],
             decode_func=lambda data: [Department(**d) for d in data],
         )

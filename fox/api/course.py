@@ -5,8 +5,8 @@ from attr import asdict, attrib, attrs
 from fox.api.form_types import Department
 from fox.api.targets import CourseController
 from fox.cache import FoxCache
+from fox.config import config
 from fox.types import Course, Semester
-from fox.util import get_cache_path
 
 
 @attrs(auto_attribs=True)
@@ -18,7 +18,8 @@ class CourseManager:
 
     def __attrs_post_init__(self):
         self.cache = FoxCache(
-            target_path=get_cache_path() / f"{self.sem}/course/{self.dep.name}.json",
+            target_path=config.cache_base_folder_path
+            / f"{self.sem}/course/{self.dep.name}.json",
             encode_func=lambda courses: [asdict(c) for c in courses],
             decode_func=lambda data: [Course.from_dict(**d) for d in data],
         )
